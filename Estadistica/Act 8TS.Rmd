@@ -1,0 +1,144 @@
+---
+title: "Act7:Series de tiempo"
+author: "Elías Garza A01284041"
+date: "14/11/2023"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problema 1
+
+
+```{r}
+ser = c(4.8, 4.1, 6, 6.5, 5.8, 5.2, 6.8, 7.4, 6, 5.6, 7.5, 7.8, 6.3, 5.9, 8, 8.4)
+x= ts(ser, frequency = 4, start(c(2016,1)))
+plot.ts(x, col = "red")
+T = decompose(x)
+plot(T, col ="blue")
+```
+
+
+
+```{r}
+ventas_desestacionalizadas = (T$x)/(T$seasonal)
+x3 = 1:16
+y3 = ventas_desestacionalizadas
+N3 = lm(y3~x3)
+N3
+plot(x3, y3, type = "l")
+abline(N3, col = "red")
+text(6, 7, " ventas = -3.5443 + 0.4847 trimestre")
+```
+
+
+```{r}
+residuals <- residuals(N3)
+summary(residuals)
+summary(N3)
+plot(fitted(N3), residuals)
+abline(h = 0, col = "red")  # adds a horizontal line at 0
+```
+```{r}
+predictions <- predict(N3, newdata = y3)
+
+library(Metrics)
+mape<-mape(y3, predictions)
+mape
+```
+
+Oservamos que los residuos de nuestro modelo aditivo son bastante altos. Particularmente el modelo tiene un valor p de 0.4099 lo cual es bastante alto por lo que no es recomendado utilizar el modelo. Tambien se puede ver directamente del cálculo de la serie desestacionalizada. Tiene una clara estacionalidad cuando se supone que que deberia quitar la estacionalidad. Además, tenemos un error porcentual del 95% lo cual es simplemente exagerado por lo que intentaremos otro modelo. 
+
+## Problema 1
+
+
+```{r}
+ser = c(4.8, 4.1, 6, 6.5, 5.8, 5.2, 6.8, 7.4, 6, 5.6, 7.5, 7.8, 6.3, 5.9, 8, 8.4)
+x= ts(ser, frequency = 4, start(c(2016,1)))
+plot.ts(x, col = "red")
+T = decompose(x, type='m')
+plot(T, col ="blue")
+```
+
+```{r}
+ventas_desestacionalizadas = (T$x)/(T$seasonal)
+x3 = 1:16
+y3 = ventas_desestacionalizadas
+N3 = lm(y3~x3)
+N3
+plot(x3, y3, type = "l")
+abline(N3, col = "red")
+text(6, 7, " ventas = -3.5443 + 0.4847 trimestre")
+```
+```{r}
+residuals <- residuals(N3)
+summary(residuals)
+summary(N3)
+plot(fitted(N3), residuals)
+abline(h = 0, col = "red")  # adds a horizontal line at 0
+```
+
+Vemos que ahora el valor p es considerablemente más chico y la estacionalidad se ve mucho más reducida. 
+
+```{r}
+predictions <- predict(N3, newdata = y3)
+
+library(Metrics)
+mape<-mape(y3, predictions)
+mape
+```
+
+Aquí observamos que el error es considerablemente menor con tan solo 2% lo cual es mucho más aceptable. Sin embargo, verenmos algunos otras pruebas de módelos más complejos para estimar la serie de tiempo. Esto con un módelo clásico como lo es un auto-arima. 
+
+
+```{r}
+#Training and making forecast  using AUTO-Arima
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(forecast)
+library(forecastHybrid)
+library(gbm)
+library(nnfor)
+
+sarima_ts<-auto.arima(x)
+sarima_ts
+arima_model<-forecast::forecast(sarima_ts,h=4)
+plot(arima_model)
+
+```
+Ahora una pequeña red neuronal simple con consideraciones de estacionalidad. 
+
+```{r}
+fit<-nnetar(x,repeats=40,lambda=NULL)
+fit
+nn_model<-forecast::forecast(fit,h=4)
+
+
+#Plotting prediction and testing data (red for testing data)
+plot(nn_model)
+```
+
+Vemos que ambas predicciones siguen la linea de tendencia de manera considerable.
+
+
+## Un problemilla más
+
+Vamos a calcular los promedios móviles centrados utilizando la librería zoo
+
+```{r}
+library(zoo)
+ser = c(1690, 940, 2625, 2500, 1800, 900, 2900, 2360, 1850, 110, 2930, 2615)
+# Calculate the 4-period moving average
+rollmean(ser, 4, fill = NA, align = "center")
+```
+```{r}
+x = ts(ser, frequency = 4)
+
+T = decompose(x)
+plot(T, col ="blue")
+T$seasonal
+```
+Observamos que el componente estacional más grande es por una cantidad considerable el del tercer trimestre siendo este de 840.62 lo cual tiene bastante sentido ya que este trimestre es en el cual ganan más para los 3 años de los cuales tenemos datos. 

@@ -1,0 +1,51 @@
+---
+title: "Act1 Normal Multivariada"
+author: "Elías Garza A01284041"
+date: "19/9/2023"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Ejercicio 1.
+Hallar el procedimiento para el cálculo de probabilidad de que $P(X_1 \leq 2, X_2 \leq 3)$ con $X_1$, $X_2$ se distribuyen Normal con  
+$\mu = (\mu_1 = 2.5, \mu_2 = 4)$ y $\Sigma = \begin{bmatrix}1.2 & 0 \\ 0 & 2.3 \end{bmatrix}$
+
+```{r}
+library(mnormt)
+mu = c(2.5, 4)
+sigma = matrix(c(1.2, 0, 0, 2.3), nrow=2)
+pmnorm(c(2,3), mu, sigma)
+```
+
+R. 0.08257
+
+### Ejercicio 2.
+Grafique la anterior distribución bivariada del problema 1.
+
+```{r}
+x <- seq(-1.5, 6.5, 0.2)
+y <- seq(0, 8, 0.2)
+f <- function(x, y) dmnorm(cbind(x, y), mu, sigma)
+z <- outer(x, y, f)
+#create surface plot
+persp(x, y, z, theta=-30, phi=25, expand=0.6, ticktype='detailed', col = "green")
+
+```
+
+### Ejercicio 3.
+Grafique los contornos de la anterior distribución normal bivariada correspondiente a las alturas de  0.01,  0.03, 0.05, 0.07, 0.09
+
+```{r}
+x <- seq(-1.5, 6.5, 0.1)
+y <- seq(0, 8, 0.1)
+f <- function(x, y) dmnorm(cbind(x, y), mu, sigma)
+z <- outer(x, y, f)
+#create contour plot
+contour(x, y, z, col = "blue", levels = c(0.01,0.03,0.05,0.07,0.9))
+```
+
+
+Los resultados del primer ejercicio se relacionan porque el hipervolumen del cuadrante que esta ``abajo'' de (2,3) es el nuestro valor de 0.08. Asimismo, las curvas de niver representan la proyección de la segunda grafica sobre el plano horizontal a distintas alturas. 

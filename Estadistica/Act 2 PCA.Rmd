@@ -1,0 +1,116 @@
+---
+title: "Actividad 2: PCA"
+author: "Elías Garza A01284041"
+date: "29/9/2023"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+M <- read.csv('paises_mundo.csv')
+M
+```
+
+# Parte 1
+
+Generando las matrices de covarianza y de correlación
+```{r}
+MC <- cov(M)
+MCR <- cor(M)
+```
+
+Calculando descomposición espectral de las matrices
+```{r}
+EMC <- eigen(MC)
+EMC
+
+```
+```{r}
+EMCR <- eigen(MCR)
+EMCR
+
+```
+
+Ahora la proporción de varianza explicada por cada vector:
+
+```{r}
+PC <- c()
+for(i in 1:11){
+PC <- append(PC,EMC[[1]][i] / sum(diag(MC)))
+}
+PC
+```
+```{r}
+PCR <- c()
+for(i in 1:11){
+PCR <- append(PC,EMCR[[1]][i] / sum(diag(MCR)))
+}
+PCR
+```
+Y los resultados acumulados:
+```{r}
+PC <- cumsum(PC)
+PC
+```
+
+```{r}
+pca <- prcomp(M, scale = TRUE)
+pca$rotation
+```
+
+Podemos ver que con tan solo el primer componente ya tenemos el 90\% de la varianza explicada lo cual ya es muchisimo. En particular notemos que si tomamos los primeros 2 ya tenemos el 99\% lo cual es más que suficiente. Asimismo, sucede lo mismo con los vectores que vienen de la matriz de correlación por lo que es un resultado en el cual podemos confiar. 
+
+# Parte 2
+
+```{r}
+library(stats)
+library(factoextra)
+
+library(ggplot2)
+X=read.csv("paises_mundo.csv")
+resS=princomp(X)
+compS=as.matrix(X)%*%resS$loadings
+plot(compS[,1:2],type="p", main = "A.C.P a partir de S")
+text(compS[,1],compS[,2],1:nrow(compS))
+biplot(resS)
+
+```
+
+las variables de ProdElec y PNB95 son las que muestran mayor influencie en la
+tabla de varianzas y covarianzas. Esto debido a que como se observa en l abase de datos, estas 2 variables
+tienen valores de hasta 100,000, que comparado con el resto, son valores muy grandes.
+
+# Parte 3
+```{r}
+library(FactoMineR) # Instalar FactoMineR si se usa por primera vez
+## Warning: package ’FactoMineR’ was built under R version 4.1.3
+10
+library(factoextra) # Instalar factoextra si se usa por primera vez
+library(ggplot2) # Instalar ggplot2 si se usa por primera vez
+X=read.csv("paises_mundo.csv")
+cp3 = PCA(X)
+fviz_pca_ind(cp3, col.ind = "blue", addEllipses = TRUE, repel = TRUE)
+fviz_screeplot(cp3)
+fviz_contrib(cp3, choice = c("var"))
+```
+
+
+\begin{enumerate}
+
+\item En el primer gráfico, podemos observar el resultado de proyectar los puntos reales sobre el plano definido por los dos componentes principales más relevantes. Se nota una agrupación alrededor de las coordenadas (-1, 1).
+
+\item  Al haber seleccionado dos componentes principales, la siguiente gráfica representa los coeficientes de cada variable en estas dos combinaciones lineales. A partir de esto, podemos inferir que cuanto mayor sea la magnitud de estos vectores, mayor será la importancia de esa variable en el comportamiento general del fenómeno.
+
+\item  La siguiente gráfica es bastante similar a la primera, pero la escala está ajustada de acuerdo con el valor correspondiente del eigenvalor en cada eje.
+
+\item La cuarta gráfica es conocida como la "gráfica de codo", donde se muestra el avance acumulativo de cada componente. A partir de aquí, podemos comprender por qué es razonable elegir dos vectores como componentes principales.
+
+\item Finalmente, se presenta cómo cada variable afecta al primer componente principal.
+\end{enumerate}
+
+
+

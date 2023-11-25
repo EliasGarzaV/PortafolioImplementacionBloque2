@@ -1,0 +1,57 @@
+---
+title: "Regresion Logistica"
+author: "Elías Garza A01284041"
+date: "17/10/2023"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ISLR)
+library(ggplot2)
+```
+
+```{r}
+head(Weekly)
+summary(Weekly)
+pairs(Weekly)
+cor(Weekly[, -9])
+attach(Weekly)
+plot(Volume)
+```
+
+```{r}
+modelo.log.m <- glm(Direction ~ . -Today, data
+= Weekly, family = binomial)
+summary(modelo.log.m)
+contrasts(Direction)
+confint(object = modelo.log.m, level = 0.95)
+```
+
+
+```{r}
+ggplot(data = Weekly, mapping = aes(x = Direction, y = Lag2)) +
+geom_boxplot(aes(color = Direction)) +
+geom_point(aes(color = Direction)) +
+theme_bw() +
+theme(legend.position = "null")
+```
+
+
+```{r}
+# Training: observaciones desde 1990 hasta 2008
+datos.entrenamiento <- (Year < 2009)
+# Test: observaciones de 2009 y 2010
+datos.test <- Weekly[!datos.entrenamiento, ]
+# Verifica:
+nrow(datos.entrenamiento) + nrow(datos.test)
+# Ajuste del modelo logístico con variables significativas
+#  modelo.log.s <- glm(Direction ~ variables significativas, data = Weekly,
+ # family = binomial, subset = datos.entrenamiento)
+ # summary(modelo.log.s)
+
+```
+
