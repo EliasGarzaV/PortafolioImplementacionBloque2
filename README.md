@@ -22,12 +22,14 @@ Este es el repositorio de Implementación para la concentración en Inteligencia
 
 ### Cloud Computing
 
-- [Servicio VPS:](CloudComputing/ServicioVPS_Equipo4.pdf): Entrega de actividad sobre el servicio vps.
+- [Servicio VPS:](CloudComputing/ServicioVPS_Equipo4.pdf) - Entrega de actividad sobre el servicio vps.
 
-- [Cloud Storage:](CloudComputing/CloudStorage_Equipo4.pdf): Entrega de actividad sobre el almacenamiento en la nube.
+- [Cloud Storage:](CloudComputing/CloudStorage_Equipo4.pdf) - Entrega de actividad sobre el almacenamiento en la nube.
 
 - Examen entregado en canvas.
 
+### Big Data
+- [Monitor Cloud:](BigData/MonitorUsuarios.png) En realidad no se utilizó técnicas de Big Data como Spark para el reto. Sin embargo, sí tenemos una app ejecutandose en la nube de streamlit de la cual se muestra aqui el monitor de los usuarios que han entrado. El link a la app es https://classroomassistantcloud.streamlit.app/ 
 
 ## Estructura del Repositorio 
 ```
