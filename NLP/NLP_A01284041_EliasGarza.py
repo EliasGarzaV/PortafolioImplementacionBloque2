@@ -10,7 +10,7 @@ print(ssl.get_default_verify_paths())
 st.title("Generador de puntos clave atraves de audio")
 
 
-OPENAI_API_KEY  = "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"
+OPENAI_API_KEY = SECTRETS.openai_kry
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 def transcribe_audio(file):
