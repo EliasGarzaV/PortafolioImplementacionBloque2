@@ -1,0 +1,54 @@
+#%%
+import googlemaps
+from datetime import datetime
+
+API_key = ''
+
+gmaps = googlemaps.Client(key=API_key)
+  
+  
+origins = [
+    (25.578396584996757, -100.25094981184805), #Costco
+    (25.58969920857321, -100.25734419909068),  #Muguerza 
+    (25.618338060901216, -100.27502532059292)  #PrepaTec
+    ]
+
+destinations = [
+    (25.65516759580693, -100.29308396855265), #PaseoTec
+    (25.654767919496578, -100.27554557364), #NuevoSur
+    (25.651970147853692, -100.33515641426877) #FashionDrive
+]
+
+departure_time = datetime.strptime('2024-09-13 22:00:00', '%Y-%m-%d %H:%M:%S')
+dmatrix = gmaps.distance_matrix(origins=origins, 
+                      destinations=destinations,
+                      departure_time=departure_time,
+                    #   travel_mode='driving',
+                      traffic_model='best_guess')
+
+#%%
+
+import pandas as pd
+
+data = dmatrix
+# Extracting origin, destination, distance, duration, and duration in traffic
+rows = []
+for i, origin in enumerate(data['origin_addresses']):
+    for j, destination in enumerate(data['destination_addresses']):
+        element = data['rows'][i]['elements'][j]
+        rows.append({
+            'origin': origin,
+            'destination': destination,
+            'distance_text': element['distance']['text'],
+            'distance_value': element['distance']['value'],
+            'duration_text': element['duration']['text'],
+            'duration_value': element['duration']['value'],
+            'duration_in_traffic_text': element['duration_in_traffic']['text'],
+            'duration_in_traffic_value': element['duration_in_traffic']['value']
+        })
+
+# Create DataFrame
+df = pd.DataFrame(rows)
+
+# Show DataFrame
+df
